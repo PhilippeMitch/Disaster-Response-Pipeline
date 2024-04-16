@@ -76,7 +76,8 @@ def save_data(df, database_filename):
         database file (.db) destination path
     """
     engine = create_engine('sqlite:///'+ database_filename)
-    df.to_sql(database_filename.split('.')[0] + '_table', engine, index=False, if_exists='replace')
+    df.to_sql('data/'+database_filename.split('.')[0] + '_table', engine, index=False, if_exists='replace')
+    print(database_filename.split('.')[0] + '_table')
 
 
 def main():

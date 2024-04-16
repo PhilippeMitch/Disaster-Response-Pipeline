@@ -1,5 +1,7 @@
 import re
+import sys
 import nltk
+import pickle
 import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine
@@ -15,14 +17,35 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.metrics import classification_report
 
-from custom_transformer import StartingVerbExtractor
-
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
 
 url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
 
+
+class StartingVerbExtractor(BaseEstimator, TransformerMixin):
+    """
+    Custom transformer that extracted whether each text started with a verb
+    
+    VB: verb
+    VBP: present tense verb
+    """
+    def starting_verb(self, text):
+        sentence_list = nltk.sent_tokenize(text)
+        for sentence in sentence_list:
+            pos_tags = nltk.pos_tag(tokenize(sentence))
+            first_word, first_tag = pos_tags[0]
+            if first_tag in ['VB', 'VBP'] or first_word == 'RT':
+                return True
+        return False
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        X_tagged = pd.Series(X).apply(self.starting_verb)
+        return pd.DataFrame(X_tagged)
 
 def load_data(database_filepath):
     """
@@ -42,16 +65,16 @@ def load_data(database_filepath):
             List of name's category
     """
     # load data from database
-    engine = create_engine('sqlite:///DisasterResponse.db')
-    df = pd.read_sql_table("DisasterResponse_table",engine)
+    engine = create_engine('sqlite:///'+ database_filepath)
+    df = pd.read_sql_table(database_filepath.split('.')[0] + '_table',engine)
     X = df['message']
     y = df.iloc[:,4:]
-    category_names = Y.columns
-    return X, Y, category_names
+    category_names = y.columns
+    return X, y, category_names
 
 
 def tokenize(text):
-     """
+    """
     splitting a sentence into a sequence of words.
     
     input:
@@ -123,14 +146,14 @@ def evaluate_model(model, X_test, Y_test, category_names):
     y_pred = model.predict(X_test)
     # Print classification report on test data
     for i in range(y_pred.shape[1]):
-        print("=======================",y_test.columns[i],"======================")
-        print(classification_report(y_test.iloc[:,i], y_pred[:,i]))
+        print("=======================",Y_test.columns[i],"======================")
+        print(classification_report(Y_test.iloc[:,i], y_pred[:,i]))
         
     accuracy = (y_pred == Y_test).mean().mean()
     print('Average overall accuracy {0:.2f}% \n'.format(accuracy*100))
 
 def save_model(model, model_filepath):
-    pickle.dump(model, open(model_filepath, 'wb'))
+    pickle.dump(model, open("models/"+model_filepath, 'wb'))
 
 
 def main():
