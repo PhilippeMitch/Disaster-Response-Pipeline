@@ -27,7 +27,7 @@ def tokenize(text):
 
 # load data
 engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-df = pd.read_sql_table('YourTableName', engine)
+df = pd.read_sql_table('YourDatabaseName_table', engine)
 
 # load model
 model = joblib.load("../models/your_model_name.pkl")
@@ -63,7 +63,27 @@ def index():
                     'title': "Genre"
                 }
             }
-        }
+        },
+
+        {
+            'data': [
+                Bar(
+                    x=category_names,
+                    y=category_boolean
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category",
+                    'tickangle': 35
+                }
+            }
+        }    
     ]
     
     # encode plotly graphs in JSON
