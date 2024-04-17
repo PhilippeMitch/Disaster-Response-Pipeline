@@ -16,6 +16,7 @@ from sklearn.multioutput import MultiOutputClassifier
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.metrics import classification_report
+from sklearn.model_selection import GridSearchCV
 
 nltk.download('punkt')
 nltk.download('wordnet')
@@ -124,8 +125,14 @@ def build_model():
     
          ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
-    
-    return pipeline
+
+    parameters = {
+        'clf__estimator__max_depth': [10, 20],
+        'clf__estimator__n_estimators': [50, 100],
+        'clf__estimator__min_samples_split': [2, 3]
+    }
+    model = GridSearchCV(pipeline, param_grid=parameters, n_jobs=4, verbose=2, cv=3)
+    return model
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
