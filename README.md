@@ -26,12 +26,21 @@ In a Python script, train_classifier.py, write a machine learning pipeline that:
 1. Run the following commands in the project's root directory to set up your database and model.
 
     - To run ETL pipeline that cleans data and stores in database
-        `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
+        `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/YourDatabaseName.db`
+      
+      ![](https://github.com/PhilippeMitch/Disaster-Response-Pipeline/blob/main/images/data_preprocess_local.png)
+      
     - To run ML pipeline that trains classifier and saves
-        `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
+        `python models/train_classifier.py data/YourDatabaseName.db classifier.pkl`
+
+      ![](https://github.com/PhilippeMitch/Disaster-Response-Pipeline/blob/main/images/train_models_local.png)
+
+      ![](https://github.com/PhilippeMitch/Disaster-Response-Pipeline/blob/main/images/train_models_local_1.png)
 
 2. Go to `app` directory: `cd app`
 
-3. Run your web app: `python run.py`
+4. Run your web app: `python run.py`
 
-4. Click the `PREVIEW` button to open the homepage
+![](https://github.com/PhilippeMitch/Disaster-Response-Pipeline/blob/main/images/run_app_local.png)
+
+5. Click the `PREVIEW` button to open the homepage
