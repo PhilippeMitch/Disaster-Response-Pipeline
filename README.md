@@ -39,7 +39,7 @@ In a Python script, train_classifier.py, write a machine learning pipeline that:
 
 2. Go to `app` directory: `cd app`
 
-4. Run your web app: `python run.py`
+4. Run your web app: `python run.py data/YourDatabaseName.db`
 
 ![](https://github.com/PhilippeMitch/Disaster-Response-Pipeline/blob/main/images/run_app_local.png)
 
